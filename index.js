@@ -1,0 +1,17 @@
+const express = require('express');
+require('dotenv').config();
+const app = express();
+app.use(express.json());
+
+const auth = require('./routes/auth')
+app.use('/auth', auth)
+
+app.get('/', (req,res) => {
+    res.json({message:'API работает'});
+});
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, ()=> {
+    console.log(`Сервер запущен на порту ${PORT}`);
+});
