@@ -1,5 +1,6 @@
 const express = require('express');
 require('dotenv').config();
+
 const app = express();
 app.use(express.json());
 
@@ -14,6 +15,9 @@ app.get('/', (req,res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
+const errorHandler = require('./middleware/errorHandler');
+app.use(errorHandler);
 
 app.listen(PORT, ()=> {
     console.log(`Сервер запущен на порту ${PORT}`);
