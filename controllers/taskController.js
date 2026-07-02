@@ -2,14 +2,29 @@ const taskService = require('../services/taskService')
 
 const getTasks = async(req,res) =>{
     const userId = req.userId
+
+    let sort = req.query.sort ?? 'created_at';
+    let order = req.query.order ?? 'desc';
+
+    const allowedSortFields = ['created_at', 'title', 'is_done'];
+    const allowedOrderValues = ['asc', 'desc'];
+
+    if (!allowedSortFields.includes(sort)) {
+        sort = 'created_at';
+    }
+
+    if(!allowedOrderValues.includes(order)) {
+        order = 'desc';
+    }
+
     const page = Number(req.query.page ?? 1);
     const limit = Number(req.query.limit ?? 10);
     const offset = (page - 1) * limit;
+
     const isDone = req.query.is_done !== undefined 
             ? req.query.is_done === 'true'
             : undefined;
-    const searchText = req.query.search;
-    const tasks = await taskService.getTasks(userId, isDone, limit, offset, search);
+    const tasks = await taskService.getTasks(userId, sort, order, isDone, limit, offset);
     res.status(200).json(tasks);
 };
 
