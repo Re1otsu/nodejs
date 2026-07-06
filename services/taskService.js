@@ -1,6 +1,23 @@
 const pool = require('../db/pool');
 
+const getTasks = async(userId, sort, order, isDone, limit, offset) => {
+    let query = 'SELECT * FROM tasks WHERE user_id = $1';
+    const params = [userId];
 
+    if (isDone !== undefined) {
+        params.push(isDone);
+        query += ` AND is_done = $${params.length}`;
+    }
+
+    query += ` ORDER BY ${sort} ${order} LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    params.push(limit, offset);
+    
+    console.log('Query:', query);
+    console.log('Params:', params);
+
+    const result = await pool.query(query, params);
+    return result.rows;
+}
 
 const createTask = async(userId, title) =>{
     const result = await pool.query('INSERT INTO tasks (user_id, title) VALUES ($1, $2) RETURNING id, title', [userId, title])
